@@ -43,7 +43,7 @@ public class StatisticsControllerTests {
     public void beforeEach() {
         hitDto = new HitDto(1L, "ewm-main-service", "events/1", "192.168.1.1",
                 LocalDateTime.of(2023, 4, 5, 12, 32, 11));
-        hitDto = new HitDto(1L, "ewm-main-service", "events/1", "192.168.1.1",
+        hit = new Hit(1L, "ewm-main-service", "events/1", "192.168.1.1",
                 LocalDateTime.of(2023, 4, 5, 12, 32, 11));
     }
 
