@@ -86,8 +86,8 @@ public class StatisticsControllerTests {
                 .thenReturn(listOfStatistics);
 
         mvc.perform(get("/stats")
-                        .param("encodedStart", "2023-09-04%2012%3A32%3A41")
-                        .param("encodedEnd", "2023-09-04%2018%3A32%3A41")
+                        .param("start", "2023-09-04%2012%3A32%3A41")
+                        .param("end", "2023-09-04%2018%3A32%3A41")
                         .param("unique", "true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].app").value(statisticsDto.getApp()))

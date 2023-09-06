@@ -28,12 +28,12 @@ public class StatisticsController {
 
     @GetMapping("/stats")
     public List<StatisticsDto> getStatistics(
-            @RequestParam String encodedStart,
-            @RequestParam String encodedEnd,
-            @RequestParam(required = false) List<String> encodedUris,
+            @RequestParam String start,
+            @RequestParam String end,
+            @RequestParam(required = false) List<String> uris,
             @RequestParam(required = false, defaultValue = "False") Boolean unique) {
         log.info("Controller layer: request for getting statistics obtained.");
 
-        return service.getStatistics(encodedStart, encodedEnd, encodedUris, unique);
+        return service.getStatistics(start, end, uris, unique);
     }
 }
