@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.dto.StatisticsDto;
 import ru.practicum.service.model.ViewStats;
 import ru.practicum.service.i.api.StatisticsRepository;
 import ru.practicum.service.i.api.StatisticsService;
@@ -11,7 +12,6 @@ import ru.practicum.service.model.Hit;
 
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,11 +31,12 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public Collection<ViewStats> getStatistics(String encodedStart, String encodedEnd, List<String> encodedUris,
-                                               Boolean unique) {
+    public List<StatisticsDto> getStatistics(String encodedStart, String encodedEnd, List<String> encodedUris,
+                                             Boolean unique) {
         String decodedStart;
         String decodedEnd;
         List<String> decodedUris;
+        List<ViewStats> viewStats;
 
         if (encodedStart != null) {
             decodedStart = URLDecoder.decode(encodedStart, Charset.defaultCharset());
@@ -58,13 +59,18 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
 
         if (unique && decodedUris != null) {
-            return repository.getUniqueStatisticsWithUris(decodedStart, decodedEnd, decodedUris);
+            viewStats = repository.getUniqueStatisticsWithUris(decodedStart, decodedEnd, decodedUris);
         } else if (unique) {
-            return repository.getUniqueStatisticsWithoutUris(decodedStart, decodedEnd);
+            viewStats = repository.getUniqueStatisticsWithoutUris(decodedStart, decodedEnd);
         } else if (decodedUris != null) {
-            return repository.getStatisticsWithUris(decodedStart, decodedEnd, decodedUris);
+            viewStats = repository.getStatisticsWithUris(decodedStart, decodedEnd, decodedUris);
         } else {
-            return repository.getStatisticsWithoutUris(decodedStart, decodedEnd);
+            viewStats = repository.getStatisticsWithoutUris(decodedStart, decodedEnd);
         }
+
+        return viewStats
+                .stream()
+                .map(e -> new StatisticsDto(e.getApp(), e.getUri(), e.getHits()))
+                .collect(Collectors.toList());
     }
 }

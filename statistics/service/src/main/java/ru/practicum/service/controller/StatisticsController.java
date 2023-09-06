@@ -5,11 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.HitDto;
+import ru.practicum.dto.StatisticsDto;
 import ru.practicum.service.mapper.HitDtoMapper;
-import ru.practicum.service.model.ViewStats;
 import ru.practicum.service.i.api.StatisticsService;
 
-import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -28,7 +27,7 @@ public class StatisticsController {
     }
 
     @GetMapping("/stats")
-    public Collection<ViewStats> getStatistics(
+    public List<StatisticsDto> getStatistics(
             @RequestParam String encodedStart,
             @RequestParam String encodedEnd,
             @RequestParam(required = false) List<String> encodedUris,
