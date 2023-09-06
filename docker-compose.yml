@@ -8,7 +8,7 @@ services:
     depends_on:
       - stats-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/statistics_of_visits
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/statistics
 
   stats-db:
     image: postgres:13.7-alpine
@@ -16,7 +16,7 @@ services:
     ports:
       - "6541:5432"
     environment:
-      - POSTGRES_DB=statistics_of_visits
+      - POSTGRES_DB=statistics
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
 
@@ -28,4 +28,4 @@ services:
     depends_on:
       - stats-server
     environment:
-      - SERVER_URL=http://statistics-server:9090
+      - SERVER_URL=http://stats-server:9090
