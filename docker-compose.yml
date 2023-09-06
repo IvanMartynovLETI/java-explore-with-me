@@ -5,7 +5,7 @@ services:
     container_name: statistics_container
     ports:
       - "9090:9090"
-    depends-on:
+    depends_on:
       - stats-db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/statistics_of_visits
