@@ -20,14 +20,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StatisticsServiceImpl implements StatisticsService {
-    private final StatisticsRepository repository;
+    private final StatisticsRepository statisticsRepository;
 
     @Transactional
     @Override
     public Hit saveStatistics(Hit hit) {
         log.info("Service layer: request for app: {} from user with ip: {}.", hit.getApp(), hit.getIp());
 
-        return repository.save(hit);
+        return statisticsRepository.save(hit);
     }
 
     @Override
@@ -59,13 +59,13 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
 
         if (unique && decodedUris != null) {
-            viewStats = repository.getUniqueStatisticsWithUris(decodedStart, decodedEnd, decodedUris);
+            viewStats = statisticsRepository.getUniqueStatisticsWithUris(decodedStart, decodedEnd, decodedUris);
         } else if (unique) {
-            viewStats = repository.getUniqueStatisticsWithoutUris(decodedStart, decodedEnd);
+            viewStats = statisticsRepository.getUniqueStatisticsWithoutUris(decodedStart, decodedEnd);
         } else if (decodedUris != null) {
-            viewStats = repository.getStatisticsWithUris(decodedStart, decodedEnd, decodedUris);
+            viewStats = statisticsRepository.getStatisticsWithUris(decodedStart, decodedEnd, decodedUris);
         } else {
-            viewStats = repository.getStatisticsWithoutUris(decodedStart, decodedEnd);
+            viewStats = statisticsRepository.getStatisticsWithoutUris(decodedStart, decodedEnd);
         }
 
         return viewStats

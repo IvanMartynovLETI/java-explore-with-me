@@ -1,12 +1,10 @@
 package ru.practicum.service.mapper;
 
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.dto.HitDto;
 import ru.practicum.service.model.Hit;
 
 @Component
-@NoArgsConstructor
 public class HitDtoMapper {
     public Hit hitDtoToHit(HitDto hitDto) {
 
