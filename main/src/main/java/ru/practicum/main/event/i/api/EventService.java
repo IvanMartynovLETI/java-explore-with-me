@@ -20,7 +20,7 @@ public interface EventService {
 
     Event getEventByUserIdAndEventId(Long userId, Long eventId);
 
-    Event updateEventByUser(Long userId, Long EventId, UpdateEventUserRequest updateEventUserRequest);
+    Event updateEventByUser(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest);
 
     List<Request> getAllRequestsToEventsByEventAndUser(Long userId, Long eventId);
 
