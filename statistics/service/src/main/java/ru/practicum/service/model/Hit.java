@@ -20,16 +20,12 @@ public class Hit {
     @Column(name = "statistics_of_visits_id")
     @EqualsAndHashCode.Exclude
     private Long id;
-
     @Column(name = "app", nullable = false)
     private String app;
-
     @Column(name = "uri", nullable = false)
     private String uri;
-
     @Column(name = "ip", nullable = false)
     private String ip;
-
     @Column(name = "timestamp_of_query", nullable = false)
     @JsonProperty("timestamp")
     private LocalDateTime timestamp;
