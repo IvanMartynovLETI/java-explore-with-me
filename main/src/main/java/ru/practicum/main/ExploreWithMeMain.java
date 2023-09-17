@@ -9,6 +9,7 @@ import ru.practicum.client.StatisticsClient;
 @Import({StatisticsClient.class})
 public class ExploreWithMeMain {
     public static void main(String[] args) {
+
         SpringApplication.run(ExploreWithMeMain.class, args);
     }
 }
