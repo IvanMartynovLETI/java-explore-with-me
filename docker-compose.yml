@@ -32,6 +32,7 @@ services:
     depends_on:
       - ewm-db
     environment:
+      - STATISTICS_SERVER_URL=http://statistics-server:9090
       - DATABASE_URL=jdbc:postgresql://ewm-db:5432/ewm
       - DATABASE_USER=ewm
       - DATABASE_PASSWORD=ewm
