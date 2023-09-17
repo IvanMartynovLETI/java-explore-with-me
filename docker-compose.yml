@@ -17,8 +17,6 @@ services:
     container_name: statistics_db_container
     ports:
       - "6541:5432"
-    depends_on:
-      - ewm-db
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
