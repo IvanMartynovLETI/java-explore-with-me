@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class StatisticsServiceImpl implements StatisticsService {
     private final StatisticsRepository statisticsRepository;
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Transactional
     @Override
@@ -40,7 +41,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         String decodedEnd;
         List<String> decodedUris;
         List<ViewStats> viewStats;
-        DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
 
         if (encodedStart != null && encodedEnd == null) {
             throw new IncorrectSearchParametersException("End time must be non-null.");
