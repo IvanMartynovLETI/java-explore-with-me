@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.StatisticsDto;
+import ru.practicum.service.exception.IncorrectSearchParametersException;
 import ru.practicum.service.model.ViewStats;
 import ru.practicum.service.i.api.StatisticsRepository;
 import ru.practicum.service.i.api.StatisticsService;
@@ -12,6 +13,8 @@ import ru.practicum.service.model.Hit;
 
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class StatisticsServiceImpl implements StatisticsService {
     private final StatisticsRepository statisticsRepository;
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Transactional
     @Override
@@ -37,17 +41,25 @@ public class StatisticsServiceImpl implements StatisticsService {
         String decodedEnd;
         List<String> decodedUris;
         List<ViewStats> viewStats;
+        LocalDateTime startOfSearch;
+        LocalDateTime endOfSearch;
 
         if (encodedStart != null) {
             decodedStart = URLDecoder.decode(encodedStart, Charset.defaultCharset());
+            startOfSearch = LocalDateTime.parse(decodedStart, DATE_TIME_FORMATTER);
         } else {
-            decodedStart = null;
+            startOfSearch = LocalDateTime.now().minusMonths(1L);
         }
 
         if (encodedEnd != null) {
             decodedEnd = URLDecoder.decode(encodedEnd, Charset.defaultCharset());
+            endOfSearch = LocalDateTime.parse(decodedEnd, DATE_TIME_FORMATTER);
         } else {
-            decodedEnd = null;
+            endOfSearch = LocalDateTime.now().plusMonths(1L);
+        }
+
+        if (endOfSearch.isBefore(startOfSearch)) {
+            throw new IncorrectSearchParametersException("End time must be after start time.");
         }
 
         if (encodedUris != null) {
@@ -59,13 +71,13 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
 
         if (unique && decodedUris != null) {
-            viewStats = statisticsRepository.getUniqueStatisticsWithUris(decodedStart, decodedEnd, decodedUris);
+            viewStats = statisticsRepository.getUniqueStatisticsWithUris(startOfSearch, endOfSearch, decodedUris);
         } else if (unique) {
-            viewStats = statisticsRepository.getUniqueStatisticsWithoutUris(decodedStart, decodedEnd);
+            viewStats = statisticsRepository.getUniqueStatisticsWithoutUris(startOfSearch, endOfSearch);
         } else if (decodedUris != null) {
-            viewStats = statisticsRepository.getStatisticsWithUris(decodedStart, decodedEnd, decodedUris);
+            viewStats = statisticsRepository.getStatisticsWithUris(startOfSearch, endOfSearch, decodedUris);
         } else {
-            viewStats = statisticsRepository.getStatisticsWithoutUris(decodedStart, decodedEnd);
+            viewStats = statisticsRepository.getStatisticsWithoutUris(startOfSearch, endOfSearch);
         }
 
         return viewStats
