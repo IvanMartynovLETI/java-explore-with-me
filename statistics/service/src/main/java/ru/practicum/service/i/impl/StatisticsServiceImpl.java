@@ -15,6 +15,7 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         String decodedEnd;
         List<String> decodedUris;
         List<ViewStats> viewStats;
+        LocalDateTime startOfSearch;
+        LocalDateTime endOfSearch;
 
 
         if (encodedStart != null && encodedEnd == null) {
@@ -59,8 +62,19 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         decodedEnd = URLDecoder.decode(encodedEnd, Charset.defaultCharset());
 
-        if (LocalDateTime.parse(decodedEnd, DATE_TIME_FORMATTER).isBefore(LocalDateTime.parse(decodedStart,
-                DATE_TIME_FORMATTER))) {
+        try {
+            startOfSearch = LocalDateTime.parse(decodedStart, DATE_TIME_FORMATTER);
+        } catch (DateTimeParseException e) {
+            throw new IncorrectSearchParametersException("Incorrect start time.");
+        }
+
+        try {
+            endOfSearch = LocalDateTime.parse(decodedEnd, DATE_TIME_FORMATTER);
+        } catch (DateTimeParseException e) {
+            throw new IncorrectSearchParametersException("Incorrect end time.");
+        }
+
+        if (endOfSearch.isBefore(startOfSearch)) {
             throw new IncorrectSearchParametersException("Start time must be before End time.");
         }
 
