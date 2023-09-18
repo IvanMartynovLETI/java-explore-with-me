@@ -13,8 +13,6 @@ import ru.practicum.service.model.Hit;
 
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +22,6 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class StatisticsServiceImpl implements StatisticsService {
     private final StatisticsRepository statisticsRepository;
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Transactional
     @Override
@@ -41,25 +38,21 @@ public class StatisticsServiceImpl implements StatisticsService {
         String decodedEnd;
         List<String> decodedUris;
         List<ViewStats> viewStats;
-        LocalDateTime startOfSearch;
-        LocalDateTime endOfSearch;
 
         if (encodedStart != null) {
             decodedStart = URLDecoder.decode(encodedStart, Charset.defaultCharset());
-            startOfSearch = LocalDateTime.parse(decodedStart, DATE_TIME_FORMATTER);
         } else {
-            startOfSearch = LocalDateTime.now().minusMonths(1L);
+            decodedStart = null;
         }
 
         if (encodedEnd != null) {
             decodedEnd = URLDecoder.decode(encodedEnd, Charset.defaultCharset());
-            endOfSearch = LocalDateTime.parse(decodedEnd, DATE_TIME_FORMATTER);
         } else {
-            endOfSearch = LocalDateTime.now().plusMonths(1L);
+            decodedEnd = null;
         }
 
-        if (endOfSearch.isBefore(startOfSearch)) {
-            throw new IncorrectSearchParametersException("End time must be after start time.");
+        if (encodedStart != null && encodedEnd == null) {
+            throw new IncorrectSearchParametersException("End time must be non-null.");
         }
 
         if (encodedUris != null) {
@@ -71,13 +64,13 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
 
         if (unique && decodedUris != null) {
-            viewStats = statisticsRepository.getUniqueStatisticsWithUris(startOfSearch, endOfSearch, decodedUris);
+            viewStats = statisticsRepository.getUniqueStatisticsWithUris(decodedStart, decodedEnd, decodedUris);
         } else if (unique) {
-            viewStats = statisticsRepository.getUniqueStatisticsWithoutUris(startOfSearch, endOfSearch);
+            viewStats = statisticsRepository.getUniqueStatisticsWithoutUris(decodedStart, decodedEnd);
         } else if (decodedUris != null) {
-            viewStats = statisticsRepository.getStatisticsWithUris(startOfSearch, endOfSearch, decodedUris);
+            viewStats = statisticsRepository.getStatisticsWithUris(decodedStart, decodedEnd, decodedUris);
         } else {
-            viewStats = statisticsRepository.getStatisticsWithoutUris(startOfSearch, endOfSearch);
+            viewStats = statisticsRepository.getStatisticsWithoutUris(decodedStart, decodedEnd);
         }
 
         return viewStats
@@ -85,4 +78,4 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .map(e -> new StatisticsDto(e.getApp(), e.getUri(), e.getHits()))
                 .collect(Collectors.toList());
     }
-}
+}}
