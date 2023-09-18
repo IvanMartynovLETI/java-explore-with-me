@@ -39,6 +39,14 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<String> decodedUris;
         List<ViewStats> viewStats;
 
+        if (encodedStart != null && encodedEnd == null) {
+            throw new IncorrectSearchParametersException("End time must be non-null.");
+        }
+
+        if ((encodedStart == null || encodedStart.isEmpty()) && encodedEnd != null) {
+            throw new IncorrectSearchParametersException("Start time must be non-null.");
+        }
+
         if (encodedStart != null) {
             decodedStart = URLDecoder.decode(encodedStart, Charset.defaultCharset());
         } else {
@@ -49,14 +57,6 @@ public class StatisticsServiceImpl implements StatisticsService {
             decodedEnd = URLDecoder.decode(encodedEnd, Charset.defaultCharset());
         } else {
             decodedEnd = null;
-        }
-
-        if (encodedStart != null && encodedEnd == null) {
-            throw new IncorrectSearchParametersException("End time must be non-null.");
-        }
-
-        if (encodedStart == null && encodedEnd != null) {
-            throw new IncorrectSearchParametersException("Start time must be non-null.");
         }
 
         if (encodedUris != null) {
