@@ -374,7 +374,12 @@ public class EventServiceImpl implements EventService {
                 throw new IncorrectDataException(message);
             }
         } else {
-            endOfRange = LocalDateTime.now().plusYears(1L);
+            endOfRange = LocalDateTime.now().plusYears(20L);
+        }
+
+        if (endOfRange.isBefore(startOfRange)) {
+            message = "Incorrect time interval.";
+            throw new IncorrectDataException(message);
         }
 
         return eventRepository.getAllEventsByAdmin(users, states, categories, startOfRange, endOfRange,
@@ -495,7 +500,7 @@ public class EventServiceImpl implements EventService {
                 throw new IncorrectDataException(message);
             }
         } else {
-            endOfRange = LocalDateTime.now().plusYears(1L);
+            endOfRange = LocalDateTime.now().plusYears(20L);
         }
 
         if (endOfRange.isBefore(startOfRange)) {
