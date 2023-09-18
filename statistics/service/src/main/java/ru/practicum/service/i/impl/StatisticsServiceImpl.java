@@ -58,7 +58,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         decodedEnd = URLDecoder.decode(encodedEnd, Charset.defaultCharset());
 
-        if (LocalDateTime.parse(encodedEnd, DATE_TIME_FORMATTER).isBefore(LocalDateTime.parse(encodedStart,
+        if (LocalDateTime.parse(decodedEnd, DATE_TIME_FORMATTER).isBefore(LocalDateTime.parse(decodedStart,
                 DATE_TIME_FORMATTER))) {
             throw new IncorrectSearchParametersException("Start time must be before End time.");
         }
