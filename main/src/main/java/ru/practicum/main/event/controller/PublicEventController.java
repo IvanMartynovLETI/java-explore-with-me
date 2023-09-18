@@ -7,6 +7,7 @@ import ru.practicum.main.event.dto.EventDtoMapper;
 import ru.practicum.main.event.dto.EventFullDto;
 import ru.practicum.main.event.dto.EventShortDto;
 import ru.practicum.main.event.i.api.EventService;
+import ru.practicum.main.event.model.Event;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
@@ -35,10 +36,10 @@ public class PublicEventController {
             HttpServletRequest httpServletRequest) {
         log.info("Controller layer: GET /events request obtained.");
 
-        return eventDtoMapper.getSortedShortDtos(eventService.getAllPublicEvents(text, categories, paid, rangeStart,
-                rangeEnd, onlyAvailable, from, size, httpServletRequest), eventService
-                .getStatisticsOfViews(eventService.getAllPublicEvents(text, categories, paid, rangeStart, rangeEnd,
-                        onlyAvailable, from, size, httpServletRequest)), sort);
+        List<Event> events = eventService.getAllPublicEvents(text, categories, paid, rangeStart,
+                rangeEnd, onlyAvailable, from, size, httpServletRequest);
+
+        return eventDtoMapper.getSortedShortDtos(events, eventService.getStatisticsOfViews(events), sort);
     }
 
     @GetMapping("/{id}")
@@ -46,8 +47,9 @@ public class PublicEventController {
                                               HttpServletRequest httpServletRequest) {
         log.info("Controller layer: GET /events/{id} request for event with id: {} obtained.", id);
 
-        return eventDtoMapper.eventToEventFullDtoWithViews(eventService.getFullInfoAboutPublishedEvent(id,
-                httpServletRequest), eventService.getStatisticsOfViews(List.of(eventService
-                .getFullInfoAboutPublishedEvent(id, httpServletRequest))));
+        Event event = eventService.getFullInfoAboutPublishedEvent(id, httpServletRequest);
+        List<Event> events = List.of(event);
+
+        return eventDtoMapper.eventToEventFullDtoWithViews(event, eventService.getStatisticsOfViews(events));
     }
 }

@@ -498,7 +498,7 @@ public class EventServiceImpl implements EventService {
             endOfRange = LocalDateTime.now().plusYears(1L);
         }
 
-        if (rangeStart != null && rangeEnd != null && endOfRange.isBefore(startOfRange)) {
+        if (endOfRange.isBefore(startOfRange)) {
             message = "End must be after start.";
             throw new IncorrectDataException(message);
         }
