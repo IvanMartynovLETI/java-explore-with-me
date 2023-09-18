@@ -13,6 +13,8 @@ import ru.practicum.service.model.Hit;
 
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +40,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         String decodedEnd;
         List<String> decodedUris;
         List<ViewStats> viewStats;
+        DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         if (encodedStart != null && encodedEnd == null) {
             throw new IncorrectSearchParametersException("End time must be non-null.");
@@ -54,6 +57,11 @@ public class StatisticsServiceImpl implements StatisticsService {
         decodedStart = URLDecoder.decode(encodedStart, Charset.defaultCharset());
 
         decodedEnd = URLDecoder.decode(encodedEnd, Charset.defaultCharset());
+
+        if (LocalDateTime.parse(encodedEnd, DATE_TIME_FORMATTER).isBefore(LocalDateTime.parse(encodedStart,
+                DATE_TIME_FORMATTER))) {
+            throw new IncorrectSearchParametersException("Start time must be before End time.");
+        }
 
         if (encodedUris != null) {
             decodedUris = encodedUris.stream()

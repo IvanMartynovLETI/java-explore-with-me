@@ -20,7 +20,7 @@ public class ExceptionHandler {
     public ErrorResponse incorrectSearchParametersException(IncorrectSearchParametersException e) {
         log.warn(e.toString());
 
-        return new ErrorResponse(e.getMessage(), "Time parameters must be non-null.", HttpStatus.BAD_REQUEST
+        return new ErrorResponse(e.getMessage(), "Time parameters must be correct.", HttpStatus.BAD_REQUEST
                 .getReasonPhrase(), LocalDateTime.now().format(FORMATTER));
     }
 }
