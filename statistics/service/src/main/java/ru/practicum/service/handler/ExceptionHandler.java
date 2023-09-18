@@ -20,7 +20,7 @@ public class ExceptionHandler {
     public ErrorResponse incorrectSearchParametersException(IncorrectSearchParametersException e) {
         log.warn(e.toString());
 
-        return new ErrorResponse(e.getMessage(), "End must be after start.", HttpStatus.BAD_REQUEST
+        return new ErrorResponse(e.getMessage(), "End time must be non-null.", HttpStatus.BAD_REQUEST
                 .getReasonPhrase(), LocalDateTime.now().format(FORMATTER));
     }
 }

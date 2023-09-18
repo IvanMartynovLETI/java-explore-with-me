@@ -78,4 +78,4 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .map(e -> new StatisticsDto(e.getApp(), e.getUri(), e.getHits()))
                 .collect(Collectors.toList());
     }
-}}
+}
