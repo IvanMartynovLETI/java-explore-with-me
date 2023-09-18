@@ -55,6 +55,10 @@ public class StatisticsServiceImpl implements StatisticsService {
             throw new IncorrectSearchParametersException("End time must be non-null.");
         }
 
+        if (encodedStart == null && encodedEnd != null) {
+            throw new IncorrectSearchParametersException("Start time must be non-null.");
+        }
+
         if (encodedUris != null) {
             decodedUris = encodedUris.stream()
                     .map(uri -> URLDecoder.decode(uri, Charset.defaultCharset()))
