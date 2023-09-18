@@ -40,7 +40,7 @@ public interface EventService {
 
     Event getFullInfoAboutPublishedEvent(Long eventId, HttpServletRequest httpServletRequest);
 
-    Map<Long, Long> getStatisticsOfViews(List<Event> events);
+    Map<Long, Long> getStatisticsOfViews(List<Event> event);
 
     //common use methods
     Event getEventById(Long eventId);

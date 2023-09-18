@@ -568,8 +568,9 @@ public class EventServiceImpl implements EventService {
                 .map(id -> pathElem + id.toString())
                 .collect(Collectors.toList());
 
-        List<StatisticsDto> views = statisticsClient.getStatistics(LocalDateTime.now().minusMonths(1L),
-                LocalDateTime.now().plusMonths(1L), uris, true);
+        List<StatisticsDto> views = statisticsClient.getStatistics(LocalDateTime.now().minusYears(1L)
+                        .format(DT_FORMATTER), LocalDateTime.now().plusYears(1L).format(DT_FORMATTER),
+                uris, true);
 
         return views
                 .stream()

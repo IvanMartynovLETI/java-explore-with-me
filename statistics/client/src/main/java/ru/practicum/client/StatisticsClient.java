@@ -12,7 +12,6 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatisticsDto;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,7 @@ public class StatisticsClient extends BaseClient {
         post(hitDto);
     }
 
-    public List<StatisticsDto> getStatistics(LocalDateTime start, LocalDateTime end, List<String> uris,
+    public List<StatisticsDto> getStatistics(String start, String end, List<String> uris,
                                              boolean unique) {
         String strOfUris = String.join(",", uris);
 
@@ -46,7 +45,7 @@ public class StatisticsClient extends BaseClient {
 
         } else {
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.convertValue(responseEntity.getBody(), new TypeReference<>() {
+            return objectMapper.convertValue(responseEntity.getBody(), new TypeReference<List<StatisticsDto>>() {
             });
         }
     }
