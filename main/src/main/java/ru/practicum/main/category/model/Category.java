@@ -18,6 +18,6 @@ public class Category {
     @Column(name = "categories_id")
     @EqualsAndHashCode.Exclude
     private Long id;
-    @Column(name = "category_name", length = 50, nullable = false)
+    @Column(name = "category_name")
     private String name;
 }
