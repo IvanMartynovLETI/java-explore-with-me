@@ -32,12 +32,8 @@ public class RequestServiceImpl implements RequestService {
     public List<Request> getAllRequestsByUserId(Long userId) {
         log.info("Service layer: GET /users/{userId}/requests request for user with id: {} obtained.", userId);
 
-        User userFound = userRepository.findUserById(userId);
-
-        if (userFound == null) {
-            String userWarning = "User with id: " + userId + " doesn't exist in database";
-            throw new EntityDoesNotExistException(userWarning);
-        }
+        userRepository.findById(userId).orElseThrow(() ->
+                new EntityDoesNotExistException("User with id: " + userId + " doesn't exist in database"));
 
         return requestRepository.findRequestsByRequesterId(userId);
     }
@@ -49,12 +45,8 @@ public class RequestServiceImpl implements RequestService {
                 "id: {} obtained.", userId, eventId);
 
         String warning;
-        User userFound = userRepository.findUserById(userId);
-
-        if (userFound == null) {
-            warning = "User with id: " + userId + " doesn't exist in database.";
-            throw new EntityDoesNotExistException(warning);
-        }
+        User userFound = userRepository.findById(userId).orElseThrow(() ->
+                new EntityDoesNotExistException("User with id: " + userId + " doesn't exist in database"));
 
         Event eventFound = eventRepository.findEventById(eventId);
 
@@ -106,19 +98,11 @@ public class RequestServiceImpl implements RequestService {
                 "with id: {} of user with id: {} obtained.", requestId, userId);
 
         String warning;
-        User userFound = userRepository.findUserById(userId);
+        userRepository.findById(userId).orElseThrow(() ->
+                new EntityDoesNotExistException("User with id: " + userId + " doesn't exist in database"));
 
-        if (userFound == null) {
-            warning = "User with id: " + userId + " doesn't exist in database.";
-            throw new EntityDoesNotExistException(warning);
-        }
-
-        Request requestFound = requestRepository.findRequestById(requestId);
-
-        if (requestFound == null) {
-            warning = "Request with id: " + requestId + " doesn't exist in database.";
-            throw new EntityDoesNotExistException(warning);
-        }
+        Request requestFound = requestRepository.findById(requestId).orElseThrow(() ->
+                new EntityDoesNotExistException("Request with id: " + requestId + " doesn't exist in database."));
 
         if (!requestFound.getRequester().getId().equals(userId)) {
             warning = "No such request.";

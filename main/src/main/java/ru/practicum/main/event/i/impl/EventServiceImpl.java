@@ -60,12 +60,8 @@ public class EventServiceImpl implements EventService {
     public List<Event> getAllEventsByUserId(Long userId, int from, int size) {
         log.info("Service layer: GET /users/{userId}/events request for user with id: {} obtained.", userId);
 
-        User userFound = userRepository.findUserById(userId);
-
-        if (userFound == null) {
-            String warning = "User with id: " + userId + " doesn't exist in database.";
-            throw new EntityDoesNotExistException(warning);
-        }
+        User userFound = userRepository.findById(userId).orElseThrow(() ->
+                new EntityDoesNotExistException("User with id: " + userId + " doesn't exist in database."));
 
         return eventRepository.findEventsByInitiator(userFound, PageRequest.of(from / size, size)).toList();
     }
@@ -76,19 +72,12 @@ public class EventServiceImpl implements EventService {
         log.info("Service layer: POST /users/{userId}/events request for user with id: {} obtained.", userId);
         String warning;
 
-        User userFound = userRepository.findUserById(userId);
+        userRepository.findById(userId).orElseThrow(() ->
+                new EntityDoesNotExistException("User with id: " + userId + " doesn't exist in database."));
 
-        if (userFound == null) {
-            warning = "User with id: " + event.getCategory().getId() + " doesn't exist in database.";
-            throw new EntityDoesNotExistException(warning);
-        }
-
-        Category categoryFound = categoryRepository.findCategoryById(event.getCategory().getId());
-
-        if (categoryFound == null) {
-            warning = "Category with id: " + event.getCategory().getId() + " doesn't exist in database.";
-            throw new EntityDoesNotExistException(warning);
-        }
+        categoryRepository.findById(event.getCategory().getId()).orElseThrow(() ->
+                new EntityDoesNotExistException("Category with id: " + event.getCategory().getId() +
+                        " doesn't exist in database."));
 
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2L))) {
             warning = "Start time of event should be at least 2 hours later than now.";
@@ -133,12 +122,8 @@ public class EventServiceImpl implements EventService {
 
         String message;
 
-        User userFound = userRepository.findUserById(userId);
-
-        if (userFound == null) {
-            message = "User with id: " + userId + " doesn't exist in database.";
-            throw new EntityDoesNotExistException(message);
-        }
+        userRepository.findById(userId).orElseThrow(() ->
+                new EntityDoesNotExistException("User with id: " + userId + " doesn't exist in database."));
 
         Event eventFound = eventRepository.findEventById(eventId);
 
@@ -158,12 +143,8 @@ public class EventServiceImpl implements EventService {
 
         String message;
 
-        User userFound = userRepository.findUserById(userId);
-
-        if (userFound == null) {
-            message = "User with id: " + userId + " doesn't exist in database.";
-            throw new EntityDoesNotExistException(message);
-        }
+        userRepository.findById(userId).orElseThrow(() ->
+                new EntityDoesNotExistException("User with id: " + userId + " doesn't exist in database"));
 
         Event eventFound = eventRepository.findEventById(eventId);
 
@@ -208,7 +189,11 @@ public class EventServiceImpl implements EventService {
             }
 
             if (updateEventUserRequest.getCategory() != null) {
-                eventFound.setCategory(categoryRepository.findCategoryById(updateEventUserRequest.getCategory()));
+                Category categoryFound = categoryRepository.findById(updateEventUserRequest.getCategory())
+                        .orElseThrow(() -> new EntityDoesNotExistException("Category with id: " +
+                                updateEventUserRequest.getCategory() + " doesn't exist in database."));
+
+                eventFound.setCategory(categoryFound);
             }
 
             if (updateEventUserRequest.getPaid() != null) {
@@ -243,12 +228,8 @@ public class EventServiceImpl implements EventService {
                 "event with id: {} obtained.", eventId, userId);
         String message;
 
-        User userFound = userRepository.findUserById(userId);
-
-        if (userFound == null) {
-            message = "User with id: " + userId + " doesn't exist in database.";
-            throw new EntityDoesNotExistException(message);
-        }
+        userRepository.findById(userId).orElseThrow(() ->
+                new EntityDoesNotExistException("User with id: " + userId + " doesn't exist in database"));
 
         Event eventFound = eventRepository.findEventById(eventId);
 
@@ -274,12 +255,8 @@ public class EventServiceImpl implements EventService {
                 "and event with id: {} obtained.", userId, eventId);
         String message;
 
-        User userFound = userRepository.findUserById(userId);
-
-        if (userFound == null) {
-            message = "User with id: " + userId + " doesn't exist in database.";
-            throw new EntityDoesNotExistException(message);
-        }
+        userRepository.findById(userId).orElseThrow(() ->
+                new EntityDoesNotExistException("User with id: " + userId + " doesn't exist in database"));
 
         Event eventFound = eventRepository.findEventById(eventId);
 
@@ -412,12 +389,9 @@ public class EventServiceImpl implements EventService {
         }
 
         if (updateEventAdminRequest.getCategory() != null) {
-            Category categoryFound = categoryRepository.findCategoryById(updateEventAdminRequest.getCategory());
-
-            if (categoryFound == null) {
-                message = "Category with id: " + updateEventAdminRequest.getCategory() + " doesn't exist in database.";
-                throw new EntityDoesNotExistException(message);
-            }
+            Category categoryFound = categoryRepository.findById(updateEventAdminRequest.getCategory())
+                    .orElseThrow(() -> new EntityDoesNotExistException("Category with id: " +
+                            updateEventAdminRequest.getCategory() + " doesn't exist in database."));
 
             eventFound.setCategory(categoryFound);
         }

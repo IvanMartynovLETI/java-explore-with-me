@@ -2,6 +2,7 @@ package ru.practicum.main.compilation.i.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,14 +40,12 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("Service layer: DELETE /admin/compilations/{compId} request for compilation with id: {} obtained.",
                 compId);
 
-        Compilation compilationFound = compilationRepository.findCompilationById(compId);
-
-        if (compilationFound == null) {
+        try {
+            compilationRepository.deleteById(compId);
+        } catch (EmptyResultDataAccessException e) {
             String message = "Compilation with id: " + compId + " doesn't exist in database.";
             throw new EntityDoesNotExistException(message);
         }
-
-        compilationRepository.deleteById(compId);
     }
 
     @Transactional
@@ -55,12 +54,8 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("Controller layer: PATCH /admin/compilations/{compId} request for compilation with id: {} obtained.",
                 compId);
 
-        Compilation compilationFound = compilationRepository.findCompilationById(compId);
-
-        if (compilationFound == null) {
-            String message = "Compilation with id: " + compId + " doesn't exist in database.";
-            throw new EntityDoesNotExistException(message);
-        }
+        Compilation compilationFound = compilationRepository.findById(compId).orElseThrow(() ->
+                new EntityDoesNotExistException("Compilation with id: " + compId + " doesn't exist in database."));
 
         if (compilation.getTitle() != null) {
             compilationFound.setTitle(compilationFound.getTitle());
@@ -91,14 +86,8 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("Service layer: GET /compilations/{compId} request for compilation with id: {} obtained.",
                 compId);
 
-        Compilation compilationFound = compilationRepository.findCompilationById(compId);
-
-        if (compilationFound == null) {
-            String message = "Compilation with id: " + compId + " doesn't exist in database.";
-            throw new EntityDoesNotExistException(message);
-        }
-
-        return compilationFound;
+        return compilationRepository.findById(compId).orElseThrow(() ->
+                new EntityDoesNotExistException("Compilation with id: " + compId + " doesn't exist in database."));
     }
 
     @Override

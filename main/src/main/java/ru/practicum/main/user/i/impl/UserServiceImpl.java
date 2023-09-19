@@ -3,6 +3,7 @@ package ru.practicum.main.user.i.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,20 +47,19 @@ public class UserServiceImpl implements UserService {
         log.info("Controller layer: DELETE /admin/users/{userId} request for deleting user with id: {} obtained.",
                 userId);
 
-        User userFound = userRepository.findUserById(userId);
-
-        if (userFound == null) {
-            String userMessage = "User with id: " + userId + " doesn't exist in database.";
-            throw new EntityDoesNotExistException(userMessage);
+        try {
+            userRepository.deleteById(userId);
+        } catch (EmptyResultDataAccessException e) {
+            String message = "User with id: " + userId + " doesn't exist in database.";
+            throw new EntityDoesNotExistException(message);
         }
-
-        userRepository.deleteById(userId);
     }
 
     @Override
     public User getUserById(Long userId) {
         log.info("Service layer: request for getting user with id: {} obtained.", userId);
 
-        return userRepository.findUserById(userId);
+        return userRepository.findById(userId).orElseThrow(() ->
+                new EntityDoesNotExistException("User with id: " + userId + " doesn't exist in database."));
     }
 }

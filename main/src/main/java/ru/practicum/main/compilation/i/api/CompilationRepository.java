@@ -9,7 +9,5 @@ import java.util.List;
 
 @Repository
 public interface CompilationRepository extends JpaRepository<Compilation, Long> {
-    Compilation findCompilationById(Long compilationId);
-
     List<Compilation> findAllByPinned(Boolean pinned, Pageable page);
 }
