@@ -2,6 +2,7 @@ package ru.practicum.main.category.i.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,32 +37,27 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategoryById(Long catId) {
         log.info("Service layer: request for deleting category with id: {} obtained.", catId);
         String message;
-        Category categoryFound = categoryRepository.findCategoryById(catId);
 
-        if (categoryFound == null) {
-            message = "Category with id:" + catId + " does not exist in database.";
-            throw new EntityDoesNotExistException(message);
-        }
-
-        if (!eventRepository.findEventsByCategoryId(categoryFound.getId()).isEmpty()) {
+        if (!eventRepository.findEventsByCategoryId(catId).isEmpty()) {
             message = "Impossible to delete category with attached events.";
             throw new IncorrectOperationException(message);
         }
 
-        categoryRepository.deleteById(catId);
+        try {
+            categoryRepository.deleteById(catId);
+        } catch (EmptyResultDataAccessException e) {
+            message = "Category with id: " + catId + " doesn't exist in database.";
+            throw new EntityDoesNotExistException(message);
+        }
     }
 
     @Transactional
     @Override
     public Category updateCategory(Long categoryId, Category category) {
         log.info("Service layer: request for updating category with id: {} obtained.", categoryId);
-        String message;
-        Category categoryFromDataBase = categoryRepository.findCategoryById(categoryId);
 
-        if (categoryFromDataBase == null) {
-            message = "Category with id: " + categoryId + " doesn't exists in database.";
-            throw new EntityDoesNotExistException(message);
-        }
+        Category categoryFromDataBase = categoryRepository.findById(categoryId).orElseThrow(()
+                -> new EntityDoesNotExistException("Category with id: " + categoryId + " doesn't exist in database."));
 
         categoryFromDataBase.setName(category.getName());
 
@@ -81,13 +77,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Category getCategoryById(Long categoryId) {
         log.info("Service layer: request for obtaining category with id: {} obtained.", categoryId);
 
-        Category categoryFound = categoryRepository.findCategoryById(categoryId);
-
-        if (categoryFound == null) {
-            String categoryWarning = "Category with id:" + categoryId + " does not exist in database.";
-            throw new EntityDoesNotExistException(categoryWarning);
-        }
-
-        return categoryFound;
+        return categoryRepository.findById(categoryId).orElseThrow(() ->
+                new EntityDoesNotExistException("Category with id: " + categoryId + " doesn't exist in database."));
     }
 }
