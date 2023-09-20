@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.StatisticsDto;
+import ru.practicum.service.exception.IncorrectSearchParametersException;
 import ru.practicum.service.model.ViewStats;
 import ru.practicum.service.i.api.StatisticsRepository;
 import ru.practicum.service.i.api.StatisticsService;
@@ -12,6 +13,9 @@ import ru.practicum.service.model.Hit;
 
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +25,8 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class StatisticsServiceImpl implements StatisticsService {
     private final StatisticsRepository statisticsRepository;
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
 
     @Transactional
     @Override
@@ -37,17 +43,40 @@ public class StatisticsServiceImpl implements StatisticsService {
         String decodedEnd;
         List<String> decodedUris;
         List<ViewStats> viewStats;
+        LocalDateTime startOfSearch;
+        LocalDateTime endOfSearch;
 
-        if (encodedStart != null) {
-            decodedStart = URLDecoder.decode(encodedStart, Charset.defaultCharset());
-        } else {
-            decodedStart = null;
+
+        if (encodedStart != null && encodedEnd == null) {
+            throw new IncorrectSearchParametersException("End time must be non-null.");
         }
 
-        if (encodedEnd != null) {
-            decodedEnd = URLDecoder.decode(encodedEnd, Charset.defaultCharset());
-        } else {
-            decodedEnd = null;
+        if ((encodedStart == null) && encodedEnd != null) {
+            throw new IncorrectSearchParametersException("Start time must be non-null.");
+        }
+
+        if (encodedStart == null & encodedEnd == null) {
+            throw new IncorrectSearchParametersException("Start and End must be non-null.");
+        }
+
+        decodedStart = URLDecoder.decode(encodedStart, Charset.defaultCharset());
+
+        decodedEnd = URLDecoder.decode(encodedEnd, Charset.defaultCharset());
+
+        try {
+            startOfSearch = LocalDateTime.parse(decodedStart, DATE_TIME_FORMATTER);
+        } catch (DateTimeParseException e) {
+            throw new IncorrectSearchParametersException("Incorrect start time.");
+        }
+
+        try {
+            endOfSearch = LocalDateTime.parse(decodedEnd, DATE_TIME_FORMATTER);
+        } catch (DateTimeParseException e) {
+            throw new IncorrectSearchParametersException("Incorrect end time.");
+        }
+
+        if (endOfSearch.isBefore(startOfSearch)) {
+            throw new IncorrectSearchParametersException("Start time must be before End time.");
         }
 
         if (encodedUris != null) {
