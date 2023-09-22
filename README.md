@@ -68,4 +68,4 @@ docker-compose up. Приложение доступно по адресу local
 ![Диаграмма базы данных](/full_db_diagram.png)
 
 #
-#Ссылка: 
+#Ссылка: https://github.com/IvanMartynovLETI/java-explore-with-me/pull/5
