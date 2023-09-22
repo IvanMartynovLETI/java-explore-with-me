@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "72d84310-ee52-4c93-8ea4-4cd52957caa8",
+		"_postman_id": "1c138152-56da-48ba-92bb-a162e7aafc42",
 		"name": "Test Explore With Me - Feature Comments",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "26927032"
@@ -190,9 +190,10 @@
 									"        pm.collectionVariables.set(\"uid\", user.id);\r",
 									"        \r",
 									"        let commentText = rnd.getComment();\r",
+									"        let eventId = 100500;\r",
 									"        let comment = {\r",
 									"        text: commentText,\r",
-									"        event: 100500\r",
+									"        event: eventId\r",
 									"    };\r",
 									"console.log(comment);\r",
 									"    pm.request.body.update({\r",
