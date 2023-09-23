@@ -14,5 +14,5 @@ import javax.validation.constraints.Size;
 public class UpdateCommentUserRequest {
     @NotBlank
     @Size(min = 3, max = 10200)
-    String text;
+    private String text;
 }

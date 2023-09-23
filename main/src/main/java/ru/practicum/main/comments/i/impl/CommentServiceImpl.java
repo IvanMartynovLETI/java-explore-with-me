@@ -74,7 +74,6 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.deleteById(commentId);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Comment getCommentById(Long commentId) {
         log.info("Service layer: GET /comments/{commentId} request for comment with id: {} obtained.", commentId);
@@ -83,7 +82,6 @@ public class CommentServiceImpl implements CommentService {
                 new EntityDoesNotExistException("Comment with id: " + commentId + " doesn't exist in database."));
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<Comment> getCommentsAboutEvent(Long eventId, int from, int size) {
         log.info("Controller layer: GET/comments/events/{eventId} request for event with id: {} obtained.", eventId);
