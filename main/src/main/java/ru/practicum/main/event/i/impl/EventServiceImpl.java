@@ -559,10 +559,17 @@ public class EventServiceImpl implements EventService {
                 1));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public Event getEventById(Long eventId) {
 
         return eventRepository.findEventById(eventId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Event findEventById(Long eventId) {
+        return eventRepository.findById(eventId).orElseThrow(() ->
+                new EntityDoesNotExistException("Event with id: " + eventId + " doesn't exist in database."));
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.main.exception.*;
 
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -59,5 +60,14 @@ public class ExceptionApiHandler {
 
         return new ApiError(e.getMessage(), "Incorrect data.", HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 LocalDateTime.now().format(FORMATTER));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError constraintViolationException(ConstraintViolationException e) {
+        log.warn(e.toString());
+
+        return new ApiError(e.getMessage(), "Incorrect parameter of request.",
+                HttpStatus.BAD_REQUEST.getReasonPhrase(), LocalDateTime.now().format(FORMATTER));
     }
 }

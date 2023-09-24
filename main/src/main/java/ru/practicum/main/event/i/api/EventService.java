@@ -44,4 +44,6 @@ public interface EventService {
 
     //common use methods
     Event getEventById(Long eventId);
+
+    Event findEventById(Long eventId);
 }
